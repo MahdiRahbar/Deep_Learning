@@ -1,0 +1,1 @@
+The dataset was retrieved from this [website](http://www.cs.cmu.edu/afs/cs.cmu.edu/project/theo-20/www/data/news20.html)!
