@@ -6,7 +6,9 @@ Created on Tue Jan 14 12:26:07 2020
 """
 
 import pandas as pd
-from . import * from callApi
+from callApi import *
+import json
+import ast 
 
 #---------------------------------------------------------------
 api_key = "cbb6763d-3535-ea11-80eb-98ded002619b"
@@ -57,7 +59,7 @@ class DataGenerator:
             print("The Error is : ", e)
             print("Error on iteration: {0} function: {1} ".format(i,"Text Normalizer"))
             self.ErrorListIndex.append(i)
-            continue       
+                   
 #         ################ Call Sentence Splitter ##################
         try:
             url =  baseUrl + "PreProcessing/SentenceSplitter"
@@ -76,7 +78,7 @@ class DataGenerator:
             print("The Error is : ", e)
             print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
             self.ErrorListIndex.append(i)
-            continue
+            
         return temp
 
     def Comment_Cleaner_2_Formal(self, str_data):
@@ -97,8 +99,8 @@ class DataGenerator:
         except Exception as e: 
             print("The Error is : ", e)
             print("Error on iteration: {0} function: {1} ".format(i,"Text Normalizer"))
-            self.ErrorListIndex.append(i)
-            continue       
+            self.ErrorListIndex_formal.append(i)
+                   
 #         ################ Call Slang to Formal Converter ##################
         try:
             url =  baseUrl + "TextRefinement/FormalConverter"
@@ -107,9 +109,9 @@ class DataGenerator:
         except Exception as e: 
             print("The Error is : ", e)
             print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
-            ErrorListIndex.append(i)
+            self.ErrorListIndex_formal.append(i)
 
-            continue
+            
 #         ################ Call Sentence Splitter ##################
         try:
             url =  baseUrl + "PreProcessing/SentenceSplitter"
@@ -127,11 +129,11 @@ class DataGenerator:
         except Exception as e: 
             print("The Error is : ", e)
             print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
-            self.ErrorListIndex.append(i)
-            continue
+            self.ErrorListIndex_formal.append(i)
+            
         return temp
 
-    def Adv_Disadv(self):
+    def Adv_Disadv(self,input_data):
         """
         
         """
@@ -139,7 +141,7 @@ class DataGenerator:
         temp = []
 
         final_temp = []
-        internal_list_temp = ast.literal_eval(data.iloc[i][field])
+        internal_list_temp = ast.literal_eval(input_data)
         for j in range(len(internal_list_temp)):
                 #####################      Text Normalizer       #########################
             try:
@@ -152,7 +154,7 @@ class DataGenerator:
             except Exception as e: 
                 print("The Error is : ", e)
                 print("Error on iteration: {0} function: {1} ".format(i,"Text Normalizer"))
-                ErrorListIndex.append(i)
+                self.ErrorListIndex.append(i)
                 continue
 
 
@@ -174,14 +176,14 @@ class DataGenerator:
             except Exception as e: 
                 print("The Error is : ", e)
                 print("Error on iteration: {0} function: {1} ".format(i,"Sentence Tokenizer"))
-                ErrorListIndex.append(i)
+                self.ErrorListIndex.append(i)
 
                 continue
             for l in range(len(temp)):
                 final_temp.append(temp[l])
         return final_temp
     
-    def Adv_Disadv_2_Formal(self):
+    def Adv_Disadv_2_Formal(self, input_data):
         """
         
         """
@@ -189,7 +191,7 @@ class DataGenerator:
         temp = []
 
         final_temp = []
-        internal_list_temp = ast.literal_eval(data.iloc[i][field])
+        internal_list_temp = ast.literal_eval(input_data)
         for j in range(len(internal_list_temp)):
                 #####################      Text Normalizer       #########################
             try:
@@ -202,7 +204,7 @@ class DataGenerator:
             except Exception as e: 
                 print("The Error is : ", e)
                 print("Error on iteration: {0} function: {1} ".format(i,"Text Normalizer"))
-                ErrorListIndex.append(i)
+                self.ErrorListIndex.append(i)
                 continue
 
     #         ################ Call Slang to Formal Converter ##################
@@ -213,7 +215,7 @@ class DataGenerator:
             except Exception as e: 
                 print("The Error is : ", e)
                 print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
-                ErrorListIndex.append(i)
+                self.ErrorListIndex.append(i)
 
                 continue
     #         ################ Sentence Tokenizer ##################
@@ -234,14 +236,14 @@ class DataGenerator:
             except Exception as e: 
                 print("The Error is : ", e)
                 print("Error on iteration: {0} function: {1} ".format(i,"Sentence Tokenizer"))
-                ErrorListIndex.append(i)
+                self.ErrorListIndex.append(i)
 
                 continue
             for l in range(len(temp)):
                 final_temp.append(temp[l])
         return final_temp
 
-    def PoS_Extractor(self, input_list):
+    def PoS_Extractor(self, input_data):
         """
         
         """
@@ -258,11 +260,9 @@ class DataGenerator:
         return temp_list
 
     def Data_cleaner(self):
-        temp_data = pd.DataFrame(self.data)
-        overall_data_list = []
-        ErrorListIndex = []
-
         for i in range(self.data_length):
+            temp_data = pd.DataFrame(self.input_data)
+
             self.counter = i
             temp_data = []
             temp_data.append(self.input_data.iloc[i]["product_title"])
@@ -272,20 +272,23 @@ class DataGenerator:
             ### Comment Section 
             temp_data.append(self.input_data.iloc[i]["comment"])
             # Cleaning Comment
-            temp_data.append(Comment_cleaner(self.input_data.iloc[i]["comment"]))
-            temp_data.append(PoS_Extractor(self.input_data.iloc[i]["comment"]))
+            Cleaned_Comment_Output = self.Comment_Cleaner(self.input_data.iloc[i]["comment"])
+            temp_data.append(Cleaned_Comment_Output)
+            temp_data.append(self.PoS_Extractor(Cleaned_Comment_Output))
         #===========================================================================
             ### Advantages Section 
             temp_data.append(self.input_data.iloc[i]["advantages"])
             # Cleaning Advantages
-            temp_data.append(Adv_Disadv(self.input_data.iloc[i]["advantages"]))
-            temp_data.append(PoS_Extractor(self.input_data.iloc[i]["advantages"]))
+            Cleaned_Adv = self.Adv_Disadv(self.input_data.iloc[i]["advantages"])
+            temp_data.append(Cleaned_Adv)
+            temp_data.append(self.PoS_Extractor(Cleaned_Adv))
         #===========================================================================
             ### Disadvantages Section 
             temp_data.append(self.input_data.iloc[i]["disadvantages"])
             # Cleaning Disadvantages
-            temp_data.append(Adv_Disadv(self.input_data.iloc[i]["disadvantages"]))
-            temp_data.append(PoS_Extractor(self.input_data.iloc[i]["disadvantages"]))
+            temp_DisAdv = self.Adv_Disadv(self.input_data.iloc[i]["disadvantages"])
+            temp_data.append(temp_DisAdv)
+            temp_data.append(self.PoS_Extractor(self.input_data.iloc[i]["disadvantages"]))
             
             self.output_data.append(temp_data)
         return self.output_data , self.ErrorListIndex
@@ -294,9 +297,8 @@ class DataGenerator:
 
 
     def Data_cleaner_2_formal(self):
-        temp_data = pd.DataFrame(self.data)
-        overall_data_list = []
-        ErrorListIndex = []
+        temp_data = pd.DataFrame(self.input_data)
+
 
         for i in range(self.data_length):
             self.counter = i
@@ -308,20 +310,23 @@ class DataGenerator:
             ### Comment Section 
             temp_data.append(self.input_data.iloc[i]["comment"])
             # Cleaning Comment
-            temp_data.append(Comment_cleaner(self.input_data.iloc[i]["comment"]))
-            temp_data.append(PoS_Extractor(self.input_data.iloc[i]["comment"]))
+            Cleaned_Comment = self.Comment_Cleaner(self.input_data.iloc[i]["comment"])
+            temp_data.append(Cleaned_Comment)
+            temp_data.append(self.PoS_Extractor(Cleaned_Comment))
         #===========================================================================
             ### Advantages Section 
             temp_data.append(self.input_data.iloc[i]["advantages"])
             # Cleaning Advantages
-            temp_data.append(Adv_Disadv_2_Formal(self.input_data.iloc[i]["advantages"]))
-            temp_data.append(PoS_Extractor(self.input_data.iloc[i]["advantages"]))
+            Cleaned_Adv = self.Adv_Disadv_2_Formal(self.input_data.iloc[i]["advantages"])
+            temp_data.append(Cleaned_Adv)
+            temp_data.append(self.PoS_Extractor(self.input_data.iloc[i]["advantages"]))
         #===========================================================================
             ### Disadvantages Section 
             temp_data.append(self.input_data.iloc[i]["disadvantages"])
             # Cleaning Disadvantages
-            temp_data.append(Adv_Disadv_2_Formal(self.input_data.iloc[i]["disadvantages"]))
-            temp_data.append(PoS_Extractor(self.input_data.iloc[i]["disadvantages"]))
+            temp_DisAdv = self.Adv_Disadv_2_Formal(self.input_data.iloc[i]["disadvantages"])
+            temp_data.append(temp_DisAdv)
+            temp_data.append(self.PoS_Extractor(temp_DisAdv))
             
             self.output_data_2_formal.append(temp_data)
 
