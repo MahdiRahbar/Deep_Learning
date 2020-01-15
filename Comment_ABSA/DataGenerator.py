@@ -267,7 +267,7 @@ class DataGenerator:
 
     def Data_cleaner(self):
         temp_data = []
-        self.data_length = 1
+        self.data_length = 3
 
         for i in range(self.data_length):
             print("Hello from the other sideeee!")
@@ -396,9 +396,12 @@ class DataGenerator:
 
         return self.output_data_2_formal , self.ErrorListIndex_formal
 
-    def Save_Dataset(self, data_list):
-        temp_dataframe = pd.DataFrame(data_list,index=None)
+    def Save_Dataset(self):
+        temp_dataframe = pd.DataFrame(self.output_data,index=None )
         # print(temp_dataframe.head(3))
-        temp_dataframe.to_csv(self.save_path,index=None)  # ,header=["product_title","recommend","title","comment","Comment_Sentence_List","Comment_PoS",
+        temp_dataframe.to_csv(self.save_path,index=None,encoding="utf-8",header=["product_title","recommend","title","comment","Comment_Sentence_List","Comment_PoS",
+                                                                  "Advantage","Advantage_Normalizer","Advantage_Sentences","Disadvantage",
+                                                                  "Disadvantage_Normalizer","Disadvantage_Sentences"])  
+                                                          # ,header=["product_title","recommend","title","comment","Comment_Sentence_List","Comment_PoS",
                                                           #         "Advantage","Advantage_Normalizer","Advantage_Sentences","Disadvantage",
                                                           #         "Disadvantage_Normalizer","Disadvantage_Sentences"]
