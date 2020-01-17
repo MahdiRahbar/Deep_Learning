@@ -23,7 +23,9 @@ tokenKey = _data['token']
 #---------------------------------------------------------------
 
 class DataGenerator:
+    """
 
+    """
     def __init__(self, data_path, save_path):
         self.data_path = data_path
         self.save_path = save_path
@@ -37,35 +39,33 @@ class DataGenerator:
         self.data_length = 0
         self.counter_formal = 0
     
+
     def Data_Import(self):
         self.input_data = pd.read_csv(self.data_path)
-        # self.input_data =self.input_data[65:75]
-        # self.input_data =self.input_data[164:168]
-        self.input_data =self.input_data[3001:4001]
-
+        ### ==============
+        # self.input_data =self.input_data[18001:19001]
+        self.input_data =self.input_data[19001:]
+        ### ==============
         self.data_length = len(self.input_data)
 
+
     def Comment_Cleaner(self, str_data):
-
         """
         
         """
         i = self.counter 
         temp = []
-                #####################      Text Normalizer       #########################
+         #####################      Text Normalizer       #########################
         try:
             baseUrl = "http://api.text-mining.ir/api/"
             url =  baseUrl + "PreProcessing/NormalizePersianWord"
             payload = u'{{\"text\":\"{}\", \"refineSeparatedAffix\":true}}'.format(str_data)
-
-
             temp=callApi(url, payload, tokenKey)
         except Exception as e: 
             print("The Error is : ", e)
             print("Error on iteration: {0} function: {1} ".format(i,"Text Normalizer"))
-            self.ErrorListIndex.append(i)
-                   
-#         ################ Call Sentence Splitter ##################
+            self.ErrorListIndex.append(i)                   
+#        ################ Call Sentence Splitter ##################
         try:
             url =  baseUrl + "PreProcessing/SentenceSplitter"
             payload = u'''{\"text\":\"%s\",
@@ -82,61 +82,9 @@ class DataGenerator:
         except Exception as e: 
             print("The Error is : ", e)
             print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
-            self.ErrorListIndex.append(i)
-            
+            self.ErrorListIndex.append(i)        
         return temp
 
-    def Comment_Cleaner_2_Formal(self, str_data):
-
-        """
-        
-        """
-        i = self.counter 
-        temp = []
-                #####################      Text Normalizer       #########################
-        try:
-            baseUrl = "http://api.text-mining.ir/api/"
-            url =  baseUrl + "PreProcessing/NormalizePersianWord"
-            payload = u'{{\"text\":\"{}\", \"refineSeparatedAffix\":true}}'.format(str_data)
-
-
-            temp=callApi(url, payload, tokenKey)
-        except Exception as e: 
-            print("The Error is : ", e)
-            print("Error on iteration: {0} function: {1} ".format(i,"Text Normalizer"))
-            self.ErrorListIndex_formal.append(i)
-                   
-#         ################ Call Slang to Formal Converter ##################
-        try:
-            url =  baseUrl + "TextRefinement/FormalConverter"
-            payload = u'\"{0}\"'.format(temp)
-            temp = callApi(url, payload, tokenKey)
-        except Exception as e: 
-            print("The Error is : ", e)
-            print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
-            self.ErrorListIndex_formal.append(i)
-
-            
-#         ################ Call Sentence Splitter ##################
-        try:
-            url =  baseUrl + "PreProcessing/SentenceSplitter"
-            payload = u'''{\"text\":\"%s\",
-                    \"checkSlang\": true,
-                    \"normalize\": true,
-                    \"normalizerParams\": {
-                    \"text\": \"don't care\",
-                    \"RefineQuotationPunc \": false
-                    },
-                    \"complexSentence\": true
-                    }'''%format(temp)
-            temp = callApi(url, payload, tokenKey)
-            
-        except Exception as e: 
-            print("The Error is : ", e)
-            print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
-            self.ErrorListIndex_formal.append(i)
-            
-        return temp
 
     def Adv_Disadv(self,input_data):
         """
@@ -144,29 +92,22 @@ class DataGenerator:
         """
         i = self.counter 
         temp = []
-
         final_temp = []
         try:
             internal_list_temp = ast.literal_eval(input_data)
-            # internal_list_temp = input_data
             for j in range(len(internal_list_temp)):
                     #####################      Text Normalizer       #########################
                 if internal_list_temp[j] != '' and internal_list_temp[j] != "\r":
-                    # print("yay")
                     try:
                         baseUrl = "http://api.text-mining.ir/api/"
                         url =  baseUrl + "PreProcessing/NormalizePersianWord"
                         payload = u'{{\"text\":\"{}\", \"refineSeparatedAffix\":true}}'.format(internal_list_temp[j])
-
-
                         temp=callApi(url, payload, tokenKey)
                     except Exception as e: 
                         print("The Error is : ", e)
                         print("Error on iteration: {0} function: {1} ".format(i,"Text Normalizer"))
                         self.ErrorListIndex.append(i)
                         continue
-
-
             #         ################ Sentence Tokenizer ##################
                     try:
                         url =  baseUrl + "PreProcessing/SentenceSplitter"
@@ -181,12 +122,10 @@ class DataGenerator:
                                 }'''%temp
                         temp = callApi(url, payload, tokenKey)
                         temp = ast.literal_eval(temp)
-
                     except Exception as e: 
                         print("The Error is : ", e)
                         print("Error on iteration: {0} function: {1} ".format(i,"Sentence Tokenizer"))
                         self.ErrorListIndex.append(i)
-
                         continue
                     for l in range(len(temp)):
                         final_temp.append(temp[l])
@@ -197,107 +136,35 @@ class DataGenerator:
             final_temp.append('')
         return final_temp
     
-    def Adv_Disadv_2_Formal(self, input_data):
-        """
-        
-        """
-        i = self.counter 
-        temp = []
-
-        final_temp = []
-        try:
-            internal_list_temp = ast.literal_eval(input_data)
-            for j in range(len(internal_list_temp)):
-                    #####################      Text Normalizer       #########################
-                try:
-                    baseUrl = "http://api.text-mining.ir/api/"
-                    url =  baseUrl + "PreProcessing/NormalizePersianWord"
-                    payload = u'{{\"text\":\"{}\", \"refineSeparatedAffix\":true}}'.format(internal_list_temp[j])
-
-
-                    temp=callApi(url, payload, tokenKey)
-                except Exception as e: 
-                    print("The Error is : ", e)
-                    print("Error on iteration: {0} function: {1} ".format(i,"Text Normalizer"))
-                    self.ErrorListIndex.append(i)
-                    continue
-
-        #         ################ Call Slang to Formal Converter ##################
-                try:
-                    url =  baseUrl + "TextRefinement/FormalConverter"
-                    payload = u'\"{0}\"'.format(temp)
-                    temp = callApi(url, payload, tokenKey)
-                except Exception as e: 
-                    print("The Error is : ", e)
-                    print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
-                    self.ErrorListIndex.append(i)
-
-                    continue
-        #         ################ Sentence Tokenizer ##################
-                try:
-                    url =  baseUrl + "PreProcessing/SentenceSplitter"
-                    payload = u'''{\"text\":\"%s\",
-                            \"checkSlang\": true,
-                            \"normalize\": true,
-                            \"normalizerParams\": {
-                            \"text\": \"don't care\",
-                            \"RefineQuotationPunc \": false
-                            },
-                            \"complexSentence\": true
-                            }'''%temp
-                    temp = callApi(url, payload, tokenKey)
-                    temp = ast.literal_eval(temp)
-
-                except Exception as e: 
-                    print("The Error is : ", e)
-                    print("Error on iteration: {0} function: {1} ".format(i,"Sentence Tokenizer"))
-                    self.ErrorListIndex.append(i)
-
-                    continue
-                for l in range(len(temp)):
-                    final_temp.append(temp[l])
-            return final_temp
-        except Exception as e: 
-            print("The Error is : ", e)
-            print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
-            self.ErrorListIndex.append(i)
 
     def PoS_Extractor(self, input_data):
         """
         
         """
-        # print(input_data)
-        # print(type(input_data))
         try:
             url =  baseUrl + "PosTagger/GetPos"
             temp_list = [] 
             new_list = list(input_data)
             for i in range(len(new_list)):
-
                 sentence_POS = []
-                # print(new_list[i])
                 payload = u'\"{0}\"'.format(new_list[i])                
                 result = json.loads(callApi(url, payload, tokenKey))
                 for phrase in result:
                     sentence_POS.append("("+phrase['word']+","+phrase['tags']['POS']['item1']+")")
-
                 temp_list.append(sentence_POS)
         except Exception as e: 
             print("The Error is : ", e)
             print("Error on iteration: {0} function: {1} ".format(self.counter,"PoS extractor"))
             self.ErrorListIndex.append(i)
-
         return temp_list
+
 
     def Data_cleaner(self):
         temp_data = []
-        # self.data_length = 1001
-
         for i in range(self.data_length):
             print("--------------------------------------")
             start_temp_time = time.time()
             print("Record %d is in progress..."%(i+1))
-            # print("Hello from the other sideeee!")
             self.counter = i
             temp_data = []
             temp_data.append(self.input_data.iloc[i]["product_title"])
@@ -307,128 +174,30 @@ class DataGenerator:
             ### Comment Section 
             temp_data.append(self.input_data.iloc[i]["comment"])
             # Cleaning Comment
-
-            # Cleaned_Comment_Output = self.Comment_Cleaner(self.input_data.iloc[i]["comment"])
             Cleaned_Comment_Output = ast.literal_eval(self.Comment_Cleaner(self.input_data.iloc[i]["comment"]))
             temp_data.append(list(Cleaned_Comment_Output))
-            # print(Cleaned_Comment_Output)
-            # print(type(Cleaned_Comment_Output))
             temp_data.append(list(self.PoS_Extractor(Cleaned_Comment_Output)))
         #===========================================================================
             ### Advantages Section 
             temp_data.append(self.input_data.iloc[i]["advantages"])
             # Cleaning Advantages
             Cleaned_Adv = self.Adv_Disadv(self.input_data.iloc[i]["advantages"])
-            # Cleaned_Adv = self.Adv_Disadv(ast.literal_eval(self.Adv_Disadv(self.input_data.iloc[i]["advantages"])))
             temp_data.append(list(Cleaned_Adv))
             temp_data.append(list(self.PoS_Extractor(Cleaned_Adv)))
         #===========================================================================
             ### Disadvantages Section 
             temp_data.append(self.input_data.iloc[i]["disadvantages"])
             # Cleaning Disadvantages
-            temp_DisAdv = self.Adv_Disadv(self.input_data.iloc[i]["disadvantages"])
-            # temp_DisAdv = ast.literal_eval(self.Adv_Disadv(self.input_data.iloc[i]["disadvantages"]))
-            
+            temp_DisAdv = self.Adv_Disadv(self.input_data.iloc[i]["disadvantages"])            
             temp_data.append(list(temp_DisAdv))
             temp_data.append(list(self.PoS_Extractor(temp_DisAdv)))
-            # print("=====================================")
-            # print(temp_data)
-            # print(self.output_data)
             self.output_data.append(list(temp_data))
-            # print("-------------------------------------")
             print("total time for record {:d} is: {:.2f}s".format((i+1),time.time()-start_temp_time))
-            # print(self.output_data)
         return self.output_data , self.ErrorListIndex
 
 
-    # def Data_cleaner(self):
-    #     temp_data = []
-    #     self.data_length = 2 
-
-    #     for i in range(self.data_length):
-    #         print("Hello from the other sideeee!")
-    #         self.counter = i
-    #         temp_data = {"product_title":[],"recommend":[],"title":[],"comment":[],"Comment_Sentence_List":[],"Comment_PoS":[],
-    #                     "Advantage":[],"Advantage_Normalizer":[],"Advantage_Sentences":[],"Disadvantage":[],
-    #                     "Disadvantage_Normalizer":[],"Disadvantage_Sentences":[]}
-    #         temp_data["product_title"].append(self.input_data.iloc[i]["product_title"])
-    #         temp_data["recommend"].append(self.input_data.iloc[i]["recommend"])
-    #         temp_data["title"].append(self.input_data.iloc[i]["title"])
-    #     #===========================================================================
-    #         ### Comment Section 
-    #         temp_data["comment"].append(self.input_data.iloc[i]["comment"])
-    #         # Cleaning Comment
-
-    #         # Cleaned_Comment_Output = self.Comment_Cleaner(self.input_data.iloc[i]["comment"])
-    #         Cleaned_Comment_Output = ast.literal_eval(self.Comment_Cleaner(self.input_data.iloc[i]["comment"]))
-    #         temp_data["Comment_Sentence_List"].append(list(Cleaned_Comment_Output))
-    #         # print(Cleaned_Comment_Output)
-    #         # print(type(Cleaned_Comment_Output))
-    #         temp_data["Comment_PoS"].append(list(self.PoS_Extractor(Cleaned_Comment_Output)))
-    #     #===========================================================================
-    #         ### Advantages Section 
-    #         temp_data["Advantage"].append(self.input_data.iloc[i]["advantages"])
-    #         # Cleaning Advantages
-    #         Cleaned_Adv = self.Adv_Disadv(self.input_data.iloc[i]["advantages"])
-    #         # Cleaned_Adv = self.Adv_Disadv(ast.literal_eval(self.Adv_Disadv(self.input_data.iloc[i]["advantages"])))
-    #         temp_data["Advantage_Normalizer"].append(list(Cleaned_Adv))
-    #         temp_data["Advantage_Sentences"].append(list(self.PoS_Extractor(Cleaned_Adv)))
-    #     #===========================================================================
-    #         ### Disadvantages Section 
-    #         temp_data["Disadvantage"].append(self.input_data.iloc[i]["disadvantages"])
-    #         # Cleaning Disadvantages
-    #         temp_DisAdv = self.Adv_Disadv(self.input_data.iloc[i]["disadvantages"])
-    #         # temp_DisAdv = ast.literal_eval(self.Adv_Disadv(self.input_data.iloc[i]["disadvantages"]))
-            
-    #         temp_data["Disadvantage_Normalizer"].append(list(temp_DisAdv))
-    #         temp_data["Disadvantage_Sentences"].append(list(self.PoS_Extractor(temp_DisAdv)))
-            
-    #         self.output_data.append(list(temp_data))
-
-    #     return self.output_data , self.ErrorListIndex
-
-
-
-    def Data_cleaner_2_formal(self):
-
-        for i in range(self.data_length):
-            self.counter = i
-            temp_data = []
-            temp_data.append(self.input_data.iloc[i]["product_title"])
-            temp_data.append(self.input_data.iloc[i]["recommend"])
-            temp_data.append(self.input_data.iloc[i]["title"])
-        #===========================================================================
-            ### Comment Section 
-            temp_data.append(self.input_data.iloc[i]["comment"])
-            # Cleaning Comment
-            Cleaned_Comment = self.Comment_Cleaner(self.input_data.iloc[i]["comment"])
-            temp_data.append(list(Cleaned_Comment))
-            temp_data.append(list(self.PoS_Extractor(Cleaned_Comment)))
-        #===========================================================================
-            ### Advantages Section 
-            temp_data.append(self.input_data.iloc[i]["advantages"])
-            # Cleaning Advantages
-            Cleaned_Adv = self.Adv_Disadv_2_Formal(self.input_data.iloc[i]["advantages"])
-            temp_data.append(list(Cleaned_Adv))
-            temp_data.append(list(self.PoS_Extractor(self.input_data.iloc[i]["advantages"])))
-        #===========================================================================
-            ### Disadvantages Section 
-            temp_data.append(self.input_data.iloc[i]["disadvantages"])
-            # Cleaning Disadvantages
-            temp_DisAdv = self.Adv_Disadv_2_Formal(self.input_data.iloc[i]["disadvantages"])
-            temp_data.append(list(temp_DisAdv))
-            temp_data.append(self.PoS_Extractor(temp_DisAdv))
-            
-            self.output_data_2_formal.append(list(temp_data))
-
-        return self.output_data_2_formal , self.ErrorListIndex_formal
-
     def Save_Dataset(self):
         temp_dataframe = pd.DataFrame(self.output_data,index=None )
-        # print(temp_dataframe.head(3))
         temp_dataframe.to_csv(self.save_path,index=None,encoding="utf-8",header=["product_title","recommend","title","comment","Comment_Sentence_List","Comment_PoS",
                                                                   "Advantage","Advantage_Normalizer","Advantage_Sentences","Disadvantage",
                                                                   "Disadvantage_Normalizer","Disadvantage_Sentences"])  
-                                                          # ,header=["product_title","recommend","title","comment","Comment_Sentence_List","Comment_PoS",
-                                                          #         "Advantage","Advantage_Normalizer","Advantage_Sentences","Disadvantage",
-                                                          #         "Disadvantage_Normalizer","Disadvantage_Sentences"]
