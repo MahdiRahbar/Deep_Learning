@@ -43,8 +43,8 @@ class DataGenerator:
     def Data_Import(self):
         self.input_data = pd.read_csv(self.data_path)
         ### ==============
-        # self.input_data =self.input_data[18001:19001]
-        self.input_data =self.input_data[19001:]
+        # # self.input_data =self.input_data[18001:19001]
+        # self.input_data =self.input_data[19001:]
         ### ==============
         self.data_length = len(self.input_data)
 
