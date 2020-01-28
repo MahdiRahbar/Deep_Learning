@@ -67,6 +67,16 @@ class DataGenerator:
             self.ErrorListIndex.append(i)                   
 #        ################ Call Sentence Splitter ##################
         try:
+            url =  baseUrl + "TextRefinement/FormalConverter"            
+            payload = u'\"{0}\"'.format(temp)
+            temp = callApi(url, payload, tokenKey)
+        except Exception as e: 
+            print("The Error is : ", e)
+            print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
+            ErrorListIndex.append(i)
+
+            
+        try:
             url =  baseUrl + "PreProcessing/SentenceSplitter"
             payload = u'''{\"text\":\"%s\",
                     \"checkSlang\": true,
@@ -108,6 +118,14 @@ class DataGenerator:
                         print("Error on iteration: {0} function: {1} ".format(i,"Text Normalizer"))
                         self.ErrorListIndex.append(i)
                         continue
+                     try:
+                        url =  baseUrl + "TextRefinement/FormalConverter"            
+                        payload = u'\"{0}\"'.format(temp)
+                        temp = callApi(url, payload, tokenKey)
+                    except Exception as e: 
+                        print("The Error is : ", e)
+                        print("Error on iteration: {0} function: {1} ".format(i,"Slang to Formal Converter"))
+                        ErrorListIndex.append(i)
             #         ################ Sentence Tokenizer ##################
                     try:
                         url =  baseUrl + "PreProcessing/SentenceSplitter"
