@@ -10,15 +10,16 @@ import numpy as np
 from multiprocessing import Process, Lock
 from multiprocessing.sharedctypes import Array
 import multiprocessing
+import time
 
-def Data_Read(path):
+def data_read(path):
     data = pd.read_csv(path)
     data['gt'] = pd.Categorical(data['gt'])
     data['labels'] = data['gt'].cat.codes
     return data
 
-def Data_Sep(path, start_index, end_index):
-    data = Data_Read(path)
+def data_sep(path, start_index, end_index):
+    data = data_read(path)
     data = data.drop(['Index','Arrival_Time','Creation_Time','User','Model','Device'], axis=1)
     d0 = data[data['labels']==0]
     d1 = data[data['labels']==1]
@@ -43,23 +44,33 @@ def Data_Sep(path, start_index, end_index):
                   d3_arr[start_index:end_index],d4_arr[start_index:end_index],d5_arr[start_index:end_index]]
     return train_data
 
+class MultiProcessPreprocessor:
+    """
 
-def MP_Preprocessor(data, window_size):
-    Bi_labels = [BitArray([0, 0, 0, 0, 0, 1]), BitArray([0, 0, 0, 0, 1, 0]), BitArray([0, 0, 0, 1, 0, 0]),
-                 BitArray([0, 0, 1, 0, 0, 0]), \
-                 BitArray([0, 1, 0, 0, 0, 0]), BitArray([1, 0, 0, 0, 0, 0])]
-    print("Dataset preprocessing in progress...")
-    init_time = time.time()
-    lock = Lock()
-    #     array = Array('i', 10000, lock=lock)
-    X, Y = np.empty((0, window_size, 3)), np.empty((0, 6))
+    """
+    def __init__(self):
+        self.Bi_labels = [BitArray([0, 0, 0, 0, 0, 1]), BitArray([0, 0, 0, 0, 1, 0]), BitArray([0, 0, 0, 1, 0, 0]),
+                     BitArray([0, 0, 1, 0, 0, 0]), BitArray([0, 1, 0, 0, 0, 0]), BitArray([1, 0, 0, 0, 0, 0])]
+        self.window_size = window_size
+        self.data = data
+        self.x, self.y = np.empty((0, window_size, 3)), np.empty((0, len(self.Bi_labels)))
 
-    for i in range(len(data)):
-        #         p = multiprocessing.Pool(processes = multiprocessing.cpu_count()-1)
-        p = Process(target=data_prep, args=(i, data, X, Y, Bi_labels))
-        p.start()
-        p.join()
-    X = np.reshape(X, (len(X), window_size, 3))
-    Y = np.reshape(Y, (len(Y), 6))
-    print("Dataset was preprocessed in: %.2fs" % (time.time() - init_time))
-    return X, Y
+    def mp_preprocessor(self):
+        print("Data set pre-processing in progress...")
+        init_time = time.time()
+        lock = Lock()
+
+        for i in range(len(self.data)):
+            # p = multiprocessing.Pool(processes = multiprocessing.cpu_count()-1)
+            p = Process(target=self.data_prep, args=(self, i))
+            p.start()
+            p.join()
+        self.x = np.reshape(self.x, (len(self.x), self.window_size, 3))
+        self.y = np.reshape(self.y, (len(self.y), 6))
+        print("Data set was preprocessed in: %.2fs" % (time.time() - init_time))
+        return self.x, self.y
+
+    def data_prep(self,i):
+        for j in range(len(self.data[i]) - self.window_size - 1):
+            self.x = np.vstack([self.x, np.array([self.data[i][j:(j + self.window_size), ]])])
+            self.y = np.vstack([self.y, np.array([self.Bi_labels[i]])])
