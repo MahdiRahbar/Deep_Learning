@@ -10,10 +10,10 @@ from keras.models import Model
 from keras.utils import to_categorical
 from keras import optimizers
 
-def model_test(window_size, num_units):
+def model(window_size, num_units, split_point = 8):
     # Decode GA solution to integer for window_size and num_units
-    window_size_bits = BitArray(ga_individual_solution[0:8])
-    num_units_bits = BitArray(ga_individual_solution[8:])
+    window_size_bits = BitArray(ga_individual_solution[:split_point])
+    num_units_bits = BitArray(ga_individual_solution[split_point:])
     window_size = window_size_bits.uint
     num_units = num_units_bits.uint
 
@@ -23,8 +23,8 @@ def model_test(window_size, num_units):
     print('\nWindow Size: ', window_size, ', Num of Units: ', num_units)
 
     # Return fitness score of 100 if window_size or num_unit is zero
-    #     if window_size == 0 or num_units == 0:
-    #         return 100,
+    if window_size == 0 or num_units == 0:
+        return 100,
 
     X,Y = prepare_dataset(train_data,window_size)
     X_train, X_val, y_train, y_val = split(X, Y, test_size = 0.20, random_state = 1120)
