@@ -12,8 +12,12 @@ from keras import optimizers
 from bitstring import BitArray
 
 
-def model(window_size, num_units, split_point = 8):
+def deep_model(ga_individual_solution):
     # Decode GA solution to integer for window_size and num_units
+    window_size = self.window_size
+    num_units = self.num_units
+    split_point = self.split_point
+
     window_size_bits = BitArray(ga_individual_solution[:split_point])
     num_units_bits = BitArray(ga_individual_solution[split_point:])
     window_size = window_size_bits.uint
@@ -47,3 +51,4 @@ def model(window_size, num_units, split_point = 8):
     print('Train: %.3f, Test: %.3f' % (train_acc, test_acc))
 
     return test_acc,
+
