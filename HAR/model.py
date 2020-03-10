@@ -9,6 +9,8 @@ from keras.layers import LSTM, Input, Dense
 from keras.models import Model
 from keras.utils import to_categorical
 from keras import optimizers
+from bitstring import BitArray
+
 
 def model(window_size, num_units, split_point = 8):
     # Decode GA solution to integer for window_size and num_units
