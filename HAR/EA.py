@@ -8,9 +8,11 @@ Created on Mon Mar  2 12:59:10 2020
 from deap import base, creator, tools, algorithms
 from scipy.stats import bernoulli
 from bitstring import BitArray
-
+from . import model
 # population_size = 10  # Too big
 # num_generations = 15  # Takes for ever to run
+
+
 
 population_size = 4
 num_generations = 8
