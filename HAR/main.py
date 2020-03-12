@@ -15,11 +15,11 @@ END_INDEX = 10000
 
 POP_SIZE = 10  # Too big
 GEN_NUM = 15  # Takes for ever to run
-GENE_LEN = 16
+GENE_LEN = 14
+WIN_SIZE_GEN_Num = 8
 
 
 def main():
     reader = DataReader(PATH, START_INDEX, END_INDEX)
     data = reader.data_sep()
-
-    preprocessor = MultiProcessPreprocessor(data, windows )
+    ea = EA(POP_SIZE, GEN_NUM, GENE_LEN, WIN_SIZE_GEN_Num)
