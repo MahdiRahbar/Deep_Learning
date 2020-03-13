@@ -23,3 +23,4 @@ def main():
     reader = DataReader(PATH, START_INDEX, END_INDEX)
     data = reader.data_sep()
     ea = EA(POP_SIZE, GEN_NUM, GENE_LEN, WIN_SIZE_GEN_Num)
+    ea.evo_algorithm()
