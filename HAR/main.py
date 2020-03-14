@@ -5,9 +5,9 @@ Created on Mon Mar  2 12:59:10 2020
 
 @author: mahdi
 """
-from . import EA
-from . import data_prep
-from . import model
+import EA
+from data_prep import DataReader
+import model
 
 PATH = "./Activity Recognition Dataset/Watch_gyroscope.csv"
 START_INDEX = 0
