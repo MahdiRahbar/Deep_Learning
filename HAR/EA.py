@@ -8,7 +8,7 @@ Created on Mon Mar  2 12:59:10 2020
 from deap import base, creator, tools, algorithms
 from scipy.stats import bernoulli
 from bitstring import BitArray
-from . import model
+import model
 # population_size = 10  # Too big
 # num_generations = 15  # Takes for ever to run
 
@@ -22,6 +22,7 @@ class EA:
         self.window_size_gen = window_size_gen
         self.unit_number_gen = self.gene_length - self.window_size_gen
         self.split_point = self.window_size_gen - 1
+    SPLIT_POINT = self.split_point
 
     def evo_algorithm(self):
         # As we are trying to minimize the RMSE score, that's why using -1.0. |
