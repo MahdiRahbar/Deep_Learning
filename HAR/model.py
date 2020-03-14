@@ -14,9 +14,9 @@ from bitstring import BitArray
 
 def deep_model(ga_individual_solution):
     # Decode GA solution to integer for window_size and num_units
-    window_size = self.window_size
-    num_units = self.num_units
-    split_point = self.split_point
+    # window_size = self.window_size
+    # num_units = self.num_units
+    split_point = SPLIT_POINT
 
     window_size_bits = BitArray(ga_individual_solution[:split_point])
     num_units_bits = BitArray(ga_individual_solution[split_point:])
