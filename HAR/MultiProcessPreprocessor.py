@@ -59,9 +59,11 @@ class MultiProcessPreprocessor:
         p5.join()
         p6.join()
 
-        temp= list(self.Z)
-        self.x = temp[:][0]
-        self.y = temp[:][1]
+        self.x, self.y = zip(*list(self.Z))
+        self.x = np.array(self.x)
+        self.y = np.array(self.y)
+        self.x = np.reshape(self.x, (len(self.x),self.window_size,3))
+        self.y = np.reshape(self.y, (len(self.y), 6))
         print("Data set was preprocessed in: %.2fs" % (time.time() - init_time))
         return self.x, self.y
 
