@@ -23,6 +23,7 @@ class MultiProcessPreprocessor:
         self.x = []
         self.y = []
         # self.x, self.y = np.empty((0, self.window_size, 3)), np.empty((0, len(self.Bi_labels)))
+        manager = multiprocessing.Manager()
         self.Z = manager.list()
 
     def mp_preprocessor(self):
@@ -65,5 +66,5 @@ class MultiProcessPreprocessor:
         return self.x, self.y
 
     def data_prep(self,i, data,  Bi_labels):
-        for j in range(len(self.data[i]) - self.window_size - 1):
-            self.Z.append([np.array([data[j:(j + window_size),]]),np.array([Bi_labels[i]])])
+        for j in range(len(data) - self.window_size - 1):
+            self.Z.append([np.array([data[j:(j + self.window_size),]]),np.array([Bi_labels[i]])])
