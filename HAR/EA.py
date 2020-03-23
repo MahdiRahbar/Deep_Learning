@@ -10,6 +10,8 @@ from scipy.stats import bernoulli
 from bitstring import BitArray
 from model import deep_model
 import time
+from settings import *
+
 # population_size = 10  # Too big
 # num_generations = 15  # Takes for ever to run
 
