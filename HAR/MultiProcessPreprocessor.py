@@ -45,6 +45,7 @@ class MultiProcessPreprocessor:
         p4 = Process(target=self.data_prep, args=(3, self.data[3], self.Bi_labels,))
         p5 = Process(target=self.data_prep, args=(4, self.data[4], self.Bi_labels,))
         p6 = Process(target=self.data_prep, args=(5, self.data[5], self.Bi_labels,))
+
         p1.start()
         p2.start()
         p3.start()
