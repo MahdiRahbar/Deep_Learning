@@ -12,13 +12,13 @@ global PATH, POP_SIZE, GEN_NUM,GENE_LEN, WIN_SIZE_GEN_NUM, SPLIT_POINT, DATA
 
 
 
-POP_SIZE = 10  # Too big
+POP_SIZE = 5  # Too big
 GEN_NUM = 15  # Takes for ever to run
 GENE_LEN = 14
 WIN_SIZE_GEN_NUM = 8
 SPLIT_POINT = 8
 
-PATH = "./Activity Recognition Dataset/Watch_gyroscope.csv"
+PATH = "./Dataset/Watch_gyroscope.csv"
 
 reader = DataReader(PATH)  # , START_INDEX, END_INDEX
 DATA = reader.data_sep()
