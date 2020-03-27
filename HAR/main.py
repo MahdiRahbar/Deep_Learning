@@ -19,4 +19,5 @@ def main():
 
     # pass
     ea = EA(POP_SIZE, GEN_NUM, GENE_LEN)
-    ea.evo_algorithm()
+    best_window_size, best_num_units = ea.evo_algorithm()
+    
