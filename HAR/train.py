@@ -20,18 +20,17 @@ import time
 from settings import *
 
 
-def train_model(ga_individual_solution):
+
+
+
+def train_model(best_window_size, best_num_units):
     # Decode GA solution to integer for window_size and num_units
-    # window_size = self.window_size
-    # num_units = self.num_units
 
     train_data = DATA
     split_point = SPLIT_POINT
 
-    window_size_bits = BitArray(ga_individual_solution[:split_point])
-    num_units_bits = BitArray(ga_individual_solution[split_point:])
-    window_size = window_size_bits.uint
-    num_units = num_units_bits.uint
+    window_size = best_window_size
+    num_units = best_num_units
 
     #     window_size =  200
     #     num_units = 150
@@ -66,4 +65,4 @@ def train_model(ga_individual_solution):
     _, test_acc = model.evaluate(X_val, y_val, verbose=0)
     print('Train: %.3f, Test: %.3f' % (train_acc, test_acc))
 
-    return test_acc, model
+    return model, test_acc
