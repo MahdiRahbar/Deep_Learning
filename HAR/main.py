@@ -8,6 +8,7 @@ Created on Mon Mar  2 12:59:10 2020
 from EA import *
 # from data_prep import DataReader
 from settings import *
+from train import train_model
 
 # init()
 
@@ -20,4 +21,5 @@ def main():
     # pass
     ea = EA(POP_SIZE, GEN_NUM, GENE_LEN)
     best_window_size, best_num_units = ea.evo_algorithm()
-    
+    model, test_acc = train_model(best_window_size, best_num_units)
+
