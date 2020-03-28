@@ -21,8 +21,7 @@ from settings import *
 
 def deep_model(ga_individual_solution):
     # Decode GA solution to integer for window_size and num_units
-    # window_size = self.window_size
-    # num_units = self.num_units
+
 
     train_data = DATA
     split_point = SPLIT_POINT
@@ -65,5 +64,5 @@ def deep_model(ga_individual_solution):
     _, test_acc = model.evaluate(X_val, y_val, verbose=0)
     print('Train: %.3f, Test: %.3f' % (train_acc, test_acc))
 
-    return test_acc, model
+    return test_acc
 
