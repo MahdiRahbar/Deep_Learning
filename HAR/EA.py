@@ -17,6 +17,7 @@ from settings import *
 
 
 class EA:
+    # TODO: Adding a class variable to track the number of generations passed!
 
     def __init__(self, population_size, num_generations, gene_length):
         self.population_size = population_size
