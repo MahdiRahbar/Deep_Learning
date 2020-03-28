@@ -39,7 +39,7 @@ def train_model(best_window_size, best_num_units):
 
     # Return fitness score of 100 if window_size or num_unit is zero
     if window_size == 0 or num_units == 0:
-        return 100,
+        return 0,
 
     print("DEBUG: The data size is : ", len(train_data[0]))
     mp_prep = MultiProcessPreprocessor(train_data, window_size)
@@ -53,13 +53,15 @@ def train_model(best_window_size, best_num_units):
     inputs = Input(shape=(window_size, 3))
     x = LSTM(num_units, input_shape=(window_size, 3))(inputs)
     ##
+    x = Dense(200, activation='relu')(x)
+    x = Dense(100, activation='relu')(x)
     x = Dense(50, activation='relu')(x)
     ##
     predictions = Dense(6, activation='softmax')(x)
     opt = optimizers.SGD(lr=0.01, momentum=0.9)
     model = Model(inputs=inputs, outputs=predictions)
     model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
-    model.fit(X_train, y_train, epochs=3, batch_size=20, shuffle=True)
+    model.fit(X_train, y_train, epochs=10, batch_size=20, shuffle=True)
 
     _, train_acc = model.evaluate(X_train, y_train, verbose=0)
     _, test_acc = model.evaluate(X_val, y_val, verbose=0)
